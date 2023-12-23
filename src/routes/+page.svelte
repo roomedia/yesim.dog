@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from "svelte";
+	import Counter from "./Counter.svelte";
 
 	/**
 	 * @type {HTMLTextAreaElement}
@@ -23,6 +24,8 @@
 </svelte:head>
 
 <section>
+    <Counter hasToDo={true} />
+
 	<h1>
 		오늘부터<br>
 		<textarea id="todo" rows="1" spellcheck="false" placeholder={placeholder} bind:this={textarea} on:input={handleResizeHeight} /><br>
