@@ -1,21 +1,39 @@
-<script>
+<script lang="ts">
 	import { onMount } from "svelte";
 	import Counter from "./Counter.svelte";
+	import { writable } from "svelte/store";
 
-	/**
-	 * @type {HTMLTextAreaElement}
-	 */
-	let textarea;
-	let placeholder = "술마시면"; // todo: replace with diverse string
+	export let data;
+	const placeholder = data.placeholder;
 
 	onMount(() => {
 		handleResizeHeight();
-	})
+	});
+
+    let timer: number | null;
+    const todo = writable(data.todo);
+
+	const setTodoDebounced = (todoText: string, timeout: number = 750) => {
+        if (timer) {
+            clearTimeout(timer);
+        }
+		timer = setTimeout(() => {
+			// data.setTodo(todoText);
+            todo.set(todoText);
+		}, timeout);
+	}
+
+	let textarea: HTMLTextAreaElement;
 
 	const handleResizeHeight = () => {
 		textarea.style.height = 'auto';
 		textarea.style.height = textarea.scrollHeight + 'px';
 	};
+
+    const handleInput = () => {
+        setTodoDebounced(textarea.value);
+        handleResizeHeight();
+    };
 </script>
 
 <svelte:head>
@@ -24,13 +42,15 @@
 </svelte:head>
 
 <section>
-    <Counter hasToDo={true} />
+    <Counter hasTodo={($todo?.length ?? 0) > 0} />
 
-	<h1>
-		오늘부터<br>
-		<textarea id="todo" rows="1" spellcheck="false" placeholder={placeholder} bind:this={textarea} on:input={handleResizeHeight} /><br>
-		내가 🐶다
-	</h1>
+	<form method="POST">
+		<h1>
+			오늘부터<br>
+			<textarea id="todo" rows="1" spellcheck="false" placeholder={placeholder} bind:this={textarea} on:input={handleInput} /><br>
+			내가 🐶다
+		</h1>
+	</form>
 </section>
 
 <style>
