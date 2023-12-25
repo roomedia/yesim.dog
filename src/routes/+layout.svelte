@@ -4,8 +4,12 @@
 	import './styles.css';
 	import { setContext } from 'svelte';
 	import { page } from '$app/stores';
+	import type { Todo } from './Todo';
 
-	const todo = writable<string | null>();
+	const todo = writable<Todo>({
+		text: "",
+		isCompleted: false,
+	});
 	const placeholder = writable<string>();
 	$: {
 		todo.set($page.data.todo);

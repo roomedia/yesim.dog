@@ -2,11 +2,14 @@
 	import moment from 'moment';
 	import { getContext } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
+	import type { Todo } from './Todo';
 
-	const todo: Writable<string | null> = getContext("todo");
-	const hasTodo = writable();
+	const todo: Writable<Todo> = getContext("todo");
+	const isEmpty = writable();
+	const isCompleted = writable();
 	$: {
-		hasTodo.set(($todo?.length ?? 0) > 0);
+		isEmpty.set($todo.text.length <= 0);
+		isCompleted.set($todo.isCompleted);
 	}
 
 	const hours = writable(0);
@@ -15,7 +18,7 @@
 	const milliseconds = writable(0);
 
 	let interval: number;
-	$: if ($hasTodo) {
+	$: if (!$isEmpty && !$isCompleted) {
 		initCounter();
 	} else {
 		clearCounter();
@@ -40,10 +43,12 @@
 
 	const clearCounter = () => {
 		clearInterval(interval);
-		hours.set(0);
-		minutes.set(0);
-		seconds.set(0);
-		milliseconds.set(0);
+		if (!$isCompleted) {
+			hours.set(0);
+			minutes.set(0);
+			seconds.set(0);
+			milliseconds.set(0);
+		}
 	}
 
 	const padding = (number: number, maxLength: number = 2) => {
@@ -52,14 +57,22 @@
 	}
 </script>
 
-<div class="counter-viewport {$hasTodo ? 'active' : ''}">
-	<strong>{padding($hours)}:{padding($minutes)}:{padding($seconds)}.{padding($milliseconds, 3)}</strong>
-</div>
+<strong class="{!$isEmpty ? 'active' : ''}">
+	{padding($hours)}:{padding($minutes)}:{padding($seconds)}.{padding($milliseconds, 3)}
+</strong>
 
 <style>
-	.counter-viewport {
-		font-size: 4em;
+	strong {
+		font-size: 3em;
 		user-select: none;
+        align-self: end;
+		color: var(--color-text);
+	}
+
+	@media (min-width: 720px) {
+		strong {
+			font-size: 4em;
+		}
 	}
 
 	.active {

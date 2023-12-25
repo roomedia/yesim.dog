@@ -1,6 +1,10 @@
 import { get, writable } from "svelte/store";
+import type { Todo } from "./Todo";
 
-export const tempTodo = writable<string | null>(null);
+export const tempTodo = writable<Todo>({
+    text: "",
+    isCompleted: false,
+});
 
 const getTodo = async () => {
     return get(tempTodo);
