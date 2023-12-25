@@ -1,6 +1,19 @@
-<script>
+<script lang="ts">
+	import { writable } from 'svelte/store';
 	import Header from './Header.svelte';
 	import './styles.css';
+	import { setContext } from 'svelte';
+	import { page } from '$app/stores';
+
+	const todo = writable<string | null>();
+	const placeholder = writable<string>();
+	$: {
+		todo.set($page.data.todo);
+		placeholder.set($page.data.placeholder);
+	}
+
+	setContext("todo", todo);
+	setContext("placeholder", placeholder);
 </script>
 
 <div class="app">

@@ -1,22 +1,28 @@
 <script lang="ts">
 	import moment from 'moment';
-	import { writable } from 'svelte/store';
+	import { getContext } from 'svelte';
+	import { writable, type Writable } from 'svelte/store';
 
-	export let hasTodo: boolean;
+	const todo: Writable<string | null> = getContext("todo");
+	const hasTodo = writable();
+	$: {
+		hasTodo.set(($todo?.length ?? 0) > 0);
+	}
+
 	const hours = writable(0);
 	const minutes = writable(0);
 	const seconds = writable(0);
 	const milliseconds = writable(0);
 
 	let interval: number;
-	$: if (hasTodo) {
+	$: if ($hasTodo) {
 		initCounter();
 	} else {
 		clearCounter();
 	}
 
-	function initCounter() {
-		function convertMoment() {
+	const initCounter = () => {
+		const convertMoment = () => {
 			const timeDiff = moment().endOf('day').diff(moment());
 			const duration = moment.duration(timeDiff);
 
@@ -32,7 +38,7 @@
 		}, 40);
 	}
 
-	function clearCounter() {
+	const clearCounter = () => {
 		clearInterval(interval);
 		hours.set(0);
 		minutes.set(0);
@@ -40,13 +46,13 @@
 		milliseconds.set(0);
 	}
 
-	function padding(number: number, maxLength: number = 2) {
+	const padding = (number: number, maxLength: number = 2) => {
 		number = Math.floor(number);
 		return number.toString().padStart(maxLength, '0');
 	}
 </script>
 
-<div class="counter-viewport {hasTodo ? 'active' : ''}">
+<div class="counter-viewport {$hasTodo ? 'active' : ''}">
 	<strong>{padding($hours)}:{padding($minutes)}:{padding($seconds)}.{padding($milliseconds, 3)}</strong>
 </div>
 
