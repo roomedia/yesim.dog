@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { getContext, onMount, setContext } from "svelte";
-	import { type Writable } from "svelte/store";
-	import { Todo } from "./Todo";
+	import { getContext, onMount } from "svelte";
+	import type { Writable } from "svelte/store";
+	import { Todo } from "../../model/todo/Todo";
 
     const todo = getContext<Writable<Todo>>("todo");
     const placeholder = getContext<Writable<string>>("placeholder");

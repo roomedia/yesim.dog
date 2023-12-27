@@ -4,7 +4,7 @@
 	import './styles.css';
 	import { setContext } from 'svelte';
 	import { page } from '$app/stores';
-	import type { Todo } from './Todo';
+	import type { Todo } from '../model/todo/Todo';
 
 	const todo = writable<Todo>();
 	const placeholder = writable<string>();

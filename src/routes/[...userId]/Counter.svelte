@@ -2,7 +2,7 @@
 	import moment, { type Moment } from 'moment';
 	import { getContext } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
-	import type { Todo } from './Todo';
+	import type { Todo } from '../../model/todo/Todo';
 
 	const todo: Writable<Todo> = getContext("todo");
 

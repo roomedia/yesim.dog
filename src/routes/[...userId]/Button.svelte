@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { getContext } from "svelte";
 	import Counter from "./Counter.svelte";
-	import { type Writable, writable } from "svelte/store";
-	import { Todo } from "./Todo";
+	import { type Writable } from "svelte/store";
 	import moment from "moment";
+	import { Todo } from "../../model/todo/Todo";
 
     const todo: Writable<Todo> = getContext("todo");
 
