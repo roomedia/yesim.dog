@@ -1,10 +1,7 @@
 import { get, writable } from "svelte/store";
-import type { Todo } from "./Todo";
+import { Todo } from "./Todo";
 
-export const tempTodo = writable<Todo>({
-    text: "",
-    isCompleted: false,
-});
+export const tempTodo = writable<Todo>(new Todo());
 
 const getTodo = async () => {
     return get(tempTodo);
@@ -18,8 +15,13 @@ const randomTodo = () => {
 }
 
 export const load = async () => {
+    const todo = await getTodo();
     return {
-        todo: await getTodo(),
+        todo: { 
+            ...todo,
+            hasText: todo.hasText,
+            isCompleted: todo.isCompleted,
+        },
         placeholder: randomTodo(),
     };
 }

@@ -2,23 +2,20 @@
 	import { getContext } from "svelte";
 	import Counter from "./Counter.svelte";
 	import { type Writable, writable } from "svelte/store";
-	import { type Todo } from "./Todo";
+	import { Todo } from "./Todo";
+	import moment from "moment";
 
-    const todo = getContext<Writable<Todo>>("todo");
-    const isCompleted = writable<boolean>();
-    $: isCompleted.set($todo.isCompleted);
+    const todo: Writable<Todo> = getContext("todo");
 
     const toggleComplete = async () => {
-        if ($todo.text.length <= 0) {
+        if (!$todo.hasText) {
             return;
         }
-        todo.set({
-            text: $todo.text,
-            isCompleted: !$isCompleted,
-        });
+        const completedAt: number | null = ($todo.isCompleted) ? null : moment().unix();
+        todo.update((old) => new Todo(old.text, completedAt));
         fetch("api/todo/complete", {
             method: "POST",
-            body: JSON.stringify({ isCompleted: $isCompleted }),
+            body: JSON.stringify({ completedAt }),
             headers: {
                 "x-sveltekit-action": "true",
                 "content-type": "application/json",
@@ -28,8 +25,8 @@
 </script>
 
 <button on:click={toggleComplete}>
-    <span class="emoji {$isCompleted ? '' : 'gone'}" id="success">😊</span>
-    <span class="emoji {$isCompleted ? 'gone' : ''}" id="failed">🐶</span>
+    <span class="emoji {$todo.isCompleted ? '' : 'gone'}" id="success">😊</span>
+    <span class="emoji {$todo.isCompleted ? 'gone' : ''}" id="failed">🐶</span>
     <Counter />
 </button>
 

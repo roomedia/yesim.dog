@@ -6,10 +6,7 @@
 	import { page } from '$app/stores';
 	import type { Todo } from './Todo';
 
-	const todo = writable<Todo>({
-		text: "",
-		isCompleted: false,
-	});
+	const todo = writable<Todo>();
 	const placeholder = writable<string>();
 	$: {
 		todo.set($page.data.todo);

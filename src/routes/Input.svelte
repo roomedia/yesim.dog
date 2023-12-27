@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext, onMount, setContext } from "svelte";
 	import { type Writable } from "svelte/store";
-	import type { Todo } from "./Todo";
+	import { Todo } from "./Todo";
 
     const todo = getContext<Writable<Todo>>("todo");
     const placeholder = getContext<Writable<string>>("placeholder");
@@ -35,10 +35,7 @@
             }, timeout);
         }
 
-        todo.set({
-            text: textarea.value,
-            isCompleted: false,
-        });
+        todo.set(new Todo(textarea.value));
         setTodoDebounced(textarea.value);
         handleResizeHeight();
     };

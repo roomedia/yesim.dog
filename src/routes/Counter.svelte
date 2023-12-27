@@ -1,16 +1,10 @@
 <script lang="ts">
-	import moment from 'moment';
+	import moment, { type Moment } from 'moment';
 	import { getContext } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import type { Todo } from './Todo';
 
 	const todo: Writable<Todo> = getContext("todo");
-	const isEmpty = writable();
-	const isCompleted = writable();
-	$: {
-		isEmpty.set($todo.text.length <= 0);
-		isCompleted.set($todo.isCompleted);
-	}
 
 	const hours = writable(0);
 	const minutes = writable(0);
@@ -18,37 +12,40 @@
 	const milliseconds = writable(0);
 
 	let interval: number;
-	$: if (!$isEmpty && !$isCompleted) {
-		initCounter();
-	} else {
-		clearCounter();
+	$: {
+		clearInterval(interval);
+		if ($todo.hasText) {
+			if ($todo.isCompleted) {
+				convertMoment(moment.unix($todo.completedAt!));
+			} else {
+				initCounter();
+			}
+		} else {
+			clearCounter();
+		}
+	}
+
+	const convertMoment = (time: Moment) => {
+		const timeDiff = moment().endOf('day').diff(time);
+		const duration = moment.duration(timeDiff);
+
+		hours.set(duration.hours());
+		minutes.set(duration.minutes());
+		seconds.set(duration.seconds());
+		milliseconds.set(duration.milliseconds());
 	}
 
 	const initCounter = () => {
-		const convertMoment = () => {
-			const timeDiff = moment().endOf('day').diff(moment());
-			const duration = moment.duration(timeDiff);
-
-			hours.set(duration.hours());
-			minutes.set(duration.minutes());
-			seconds.set(duration.seconds());
-			milliseconds.set(duration.milliseconds());
-		}
-
-		convertMoment();
 		interval = setInterval(() => {		
-			convertMoment();
+			convertMoment(moment());
 		}, 40);
 	}
 
 	const clearCounter = () => {
-		clearInterval(interval);
-		if (!$isCompleted) {
-			hours.set(0);
-			minutes.set(0);
-			seconds.set(0);
-			milliseconds.set(0);
-		}
+		hours.set(0);
+		minutes.set(0);
+		seconds.set(0);
+		milliseconds.set(0);
 	}
 
 	const padding = (number: number, maxLength: number = 2) => {
@@ -57,7 +54,7 @@
 	}
 </script>
 
-<strong class="{!$isEmpty ? 'active' : ''}">
+<strong class="{$todo.hasText ? 'active' : ''}">
 	{padding($hours)}:{padding($minutes)}:{padding($seconds)}.{padding($milliseconds, 3)}
 </strong>
 

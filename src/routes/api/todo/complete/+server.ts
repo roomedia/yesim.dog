@@ -1,12 +1,9 @@
+import { get } from "svelte/store";
 import { tempTodo } from "../../../+page.server";
+import { Todo } from "../../../Todo";
 
 export const POST = async ({ request }: any) => {
-    const { isCompleted } = await request.json();
-    tempTodo.update((todo) => {
-        return {
-            text: todo.text,
-            isCompleted: isCompleted,
-        };
-    });
+    const { completedAt } = await request.json();
+    tempTodo.update((todo) => new Todo(todo.text, completedAt));
     return new Response();
 }
