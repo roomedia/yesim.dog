@@ -1,6 +1,10 @@
 <script lang="ts">
+	import type { Todo } from "../../model/todo/Todo";
 	import Button from "./Button.svelte";
 	import Input from "./Input.svelte";
+
+	export let todo: Todo;
+	export let placeholder: string;
 </script>
 
 <svelte:head>
@@ -9,8 +13,8 @@
 </svelte:head>
 
 <section>
-	<Button />
-	<Input />
+	<Button {todo} />
+	<Input {todo} {placeholder} />
 </section>
 
 <style>

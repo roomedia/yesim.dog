@@ -1,16 +1,22 @@
 <script lang="ts">
 	import { getContext, onMount } from "svelte";
-	import type { Writable } from "svelte/store";
+	import { writable, type Writable } from "svelte/store";
 	import { Todo } from "../../model/todo/Todo";
 
-    const todo = getContext<Writable<Todo>>("todo");
-    const placeholder = getContext<Writable<string>>("placeholder");
+    export let todo: Todo;
+    const _todo = writable<Todo>();
+    $: _todo.set(todo);
+
+    export let placeholder: string;
+    const _placeholder = writable<string>();
+    $: _placeholder.set(placeholder);
+
     let textarea: HTMLTextAreaElement;
     let setTodoTimer: number | null = null;
 
 	onMount(() => {
 		handleResizeHeight();
-        textarea.value = $todo.text;
+        textarea.value = $_todo.text;
 	});
 
 	const handleResizeHeight = () => {
@@ -35,7 +41,7 @@
             }, timeout);
         }
 
-        todo.set(new Todo(textarea.value));
+        _todo.set(new Todo(textarea.value));
         setTodoDebounced(textarea.value);
         handleResizeHeight();
     };
@@ -43,7 +49,7 @@
 
 <h1>
     오늘부터<br>
-    <textarea id="todo" rows="1" spellcheck="false" placeholder={$placeholder} bind:this={textarea} on:input={handleInput} /><br>
+    <textarea id="todo" rows="1" spellcheck="false" placeholder={$_placeholder} bind:this={textarea} on:input={handleInput} /><br>
     내가 🐶다
 </h1>
 

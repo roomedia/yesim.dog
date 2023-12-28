@@ -1,18 +1,19 @@
 <script lang="ts">
-	import { getContext } from "svelte";
 	import Counter from "./Counter.svelte";
-	import { type Writable } from "svelte/store";
+	import { writable } from "svelte/store";
 	import moment from "moment";
 	import { Todo } from "../../model/todo/Todo";
 
-    const todo: Writable<Todo> = getContext("todo");
+    export let todo: Todo;
+    const _todo = writable<Todo>();
+    $: _todo.set(todo);
 
     const toggleComplete = async () => {
-        if (!$todo.hasText) {
+        if (!$_todo.hasText) {
             return;
         }
-        const completedAt: number | null = ($todo.isCompleted) ? null : moment().unix();
-        todo.update((old) => new Todo(old.text, completedAt));
+        const completedAt: number | null = ($_todo.isCompleted) ? null : moment().unix();
+        _todo.update((old) => new Todo(old.text, completedAt));
         fetch("api/todo/complete", {
             method: "POST",
             body: JSON.stringify({ completedAt }),
@@ -25,9 +26,9 @@
 </script>
 
 <button on:click={toggleComplete}>
-    <span class="emoji {$todo.isCompleted ? '' : 'gone'}" id="success">😊</span>
-    <span class="emoji {$todo.isCompleted ? 'gone' : ''}" id="failed">🐶</span>
-    <Counter />
+    <span class="emoji {$_todo.isCompleted ? '' : 'gone'}" id="success">😊</span>
+    <span class="emoji {$_todo.isCompleted ? 'gone' : ''}" id="failed">🐶</span>
+    <Counter todo={$_todo}/>
 </button>
 
 <style>

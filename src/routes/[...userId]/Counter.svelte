@@ -4,7 +4,9 @@
 	import { writable, type Writable } from 'svelte/store';
 	import type { Todo } from '../../model/todo/Todo';
 
-	const todo: Writable<Todo> = getContext("todo");
+	export let todo: Todo;
+	const _todo = writable<Todo>();
+	$: _todo.set(todo);
 
 	const hours = writable(0);
 	const minutes = writable(0);
@@ -14,9 +16,9 @@
 	let interval: number;
 	$: {
 		clearInterval(interval);
-		if ($todo.hasText) {
-			if ($todo.isCompleted) {
-				convertMoment(moment.unix($todo.completedAt!));
+		if ($_todo.hasText) {
+			if ($_todo.isCompleted) {
+				convertMoment(moment.unix($_todo.completedAt!));
 			} else {
 				initCounter();
 			}
@@ -54,7 +56,7 @@
 	}
 </script>
 
-<strong class="{$todo.hasText ? 'active' : ''}">
+<strong class="{$_todo.hasText ? 'active' : ''}">
 	{padding($hours)}:{padding($minutes)}:{padding($seconds)}.{padding($milliseconds, 3)}
 </strong>
 
