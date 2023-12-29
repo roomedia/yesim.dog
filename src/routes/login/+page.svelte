@@ -1,23 +1,49 @@
 <script lang="ts">
-	import google from '$lib/images/google-login.svg';
+	import { afterNavigate, goto } from '$app/navigation';
 	import { supabase } from '$lib/supabaseClient';
 
-	const googleOAuth = async () => {
-		supabase.auth.signInWithOAuth({
-			provider: 'google'
+	let previousPage: string = '/';
+
+	afterNavigate(({ from }) => {
+		previousPage = from?.url?.pathname ?? '/';
+	});
+
+	window.handleSignInWithGoogle = async ({ credential }) => {
+		await supabase.auth.signInWithIdToken({
+			provider: 'google',
+			token: credential,
+			nonce: ''
 		});
+		goto(previousPage);
 	};
 </script>
 
 <svelte:head>
 	<title>로그인: 작심삼일 내가 🐶다</title>
 	<meta name="description" content="로그인: 작심삼일 내가 🐶다" />
+	<script src="https://accounts.google.com/gsi/client" async defer></script>
 </svelte:head>
 
 <section>
-	<button on:click={googleOAuth}>
-		<img src={google} alt="구글 로그인" />
-	</button>
+	<div
+		id="g_id_onload"
+		data-client_id="846158167481-dr3nb4tjvinoet7hnas7oiab2nr0v5s6.apps.googleusercontent.com"
+		data-context="use"
+		data-ux_mode="popup"
+		data-callback="handleSignInWithGoogle"
+		data-nonce=""
+		data-auto_prompt="false"
+	></div>
+
+	<div
+		class="g_id_signin"
+		data-type="standard"
+		data-shape="rectangular"
+		data-theme="outline"
+		data-text="continue_with"
+		data-size="large"
+		data-logo_alignment="left"
+	></div>
 </section>
 
 <style>
@@ -27,10 +53,5 @@
 		justify-content: center;
 		align-items: center;
 		flex: 0.6;
-	}
-
-	button {
-		height: 2.5em;
-		display: inline-block;
 	}
 </style>

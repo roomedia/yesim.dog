@@ -8,6 +8,10 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+
+	interface Window {
+		handleSignInWithGoogle: (response: { credential: string, select_by: string }) => void;
+	}
 }
 
 export {};
