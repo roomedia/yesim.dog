@@ -1,4 +1,6 @@
 import { error, type RequestEvent } from "@sveltejs/kit";
+import { writable } from "svelte/store";
+import { Todo } from "../../model/todo/Todo";
 
 export const load = async (event: RequestEvent) => {
     const userId = event.params.userId;
@@ -24,7 +26,7 @@ export const load = async (event: RequestEvent) => {
     });
     const { placeholder } = await getPlaceholder.json();
     return {
-        todo,
+        todo: writable<Todo>(todo),
         placeholder,
     };
 }

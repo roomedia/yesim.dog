@@ -1,6 +1,29 @@
 <script lang="ts">
+	import { writable } from 'svelte/store';
 	import Header from './Header.svelte';
 	import './styles.css';
+	import { onMount, setContext } from 'svelte';
+	import { supabase } from '$lib/supabaseClient';
+	import type { User } from '@supabase/supabase-js';
+
+	const user = writable<User | undefined>();
+	setContext("user", user);
+	
+	onMount(() => {
+		supabase.auth.getSession().then(({ data: { session } }) => {
+			user.set(session?.user);
+		});
+
+		const { data: { subscription: authListener } } = supabase.auth.onAuthStateChange(
+			(_, session) => {
+				user.set(session?.user);
+			}
+		)
+
+		return () => {
+			authListener?.unsubscribe();
+		}
+	});
 </script>
 
 <div class="app">

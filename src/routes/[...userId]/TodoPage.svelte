@@ -1,9 +1,10 @@
 <script lang="ts">
-	import type { Todo } from "../../model/todo/Todo";
-	import Button from "./Button.svelte";
-	import Input from "./Input.svelte";
+	import type { Writable } from 'svelte/store';
+	import type { Todo } from '../../model/todo/Todo';
+	import Button from './Button.svelte';
+	import Input from './Input.svelte';
 
-	export let todo: Todo;
+	export let todo: Writable<Todo>;
 	export let placeholder: string;
 </script>
 

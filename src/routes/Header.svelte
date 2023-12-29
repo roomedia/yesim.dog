@@ -1,17 +1,42 @@
-<script>
+<script lang="ts">
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import logo from '$lib/images/d-dog-logo.png';
+	import { supabase } from '$lib/supabaseClient';
+	import type { User } from "@supabase/supabase-js";
+	import { getContext } from 'svelte';
+	import type { Writable } from 'svelte/store';
+
+	const user: Writable<User | undefined> = getContext("user");
+
+	const login = async () => {
+		goto("login");
+	}
+
+	const logout = async () => {
+		const { error } = await supabase.auth.signOut();
+		if (error) {
+			alert(error);
+		}
+	}
 </script>
 
 <header>
 	<div class="corner">
-		<a href="https://kit.svelte.dev">
-			<img src={logo} alt="SvelteKit" />
+		<a data-sveltekit-reload href="/">
+			<img src={logo} alt="yesim.dog" />
 		</a>
 	</div>
 
+	{#if $page.route.id !== "/login"}
 	<div class="corner">
-		<button>로그인하여 공유</button>
+		{#if $user}
+		<button on:click={logout}>로그아웃</button>
+		{:else}
+		<button on:click={login}>로그인하여 공유</button>
+		{/if}
 	</div>
+	{/if}
 </header>
 
 <style>
@@ -38,5 +63,9 @@
 	.corner img {
 		height: 2em;
 		object-fit: contain;
+	}
+
+	.corner button {
+		padding: 0 1em;
 	}
 </style>

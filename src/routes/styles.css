@@ -11,7 +11,7 @@
 	--color-theme-3: #f27b50;
 	--color-text: rgba(0, 0, 0, 0.7);
 	--color-button: #ffffff;
-	--color-button-hover: #cdcdcd;
+	--color-button-hover: rgba(0, 0, 0, 0.2);
 	--column-width: 42rem;
 	--column-margin-top: 4rem;
 	font-family: var(--font-body);
@@ -84,7 +84,8 @@ button:focus:not(:focus-visible) {
 }
 
 button {
-	padding: 0 1em;
+	cursor: pointer;
+	padding: 0;
 	height: 2em;
 	background: var(--color-button);
 	border: 0px;
@@ -93,7 +94,8 @@ button {
 }
 
 button:hover {
-	background: var(--color-button-hover);
+	background-color: var(--color-button-hover);
+	background-blend-mode: multiply;
 }
 
 @media (min-width: 720px) {
