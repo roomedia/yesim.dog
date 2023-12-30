@@ -28,8 +28,8 @@
 		if (setTodoTimer) {
 			clearTimeout(setTodoTimer);
 		}
-		setTodoTimer = setTimeout(() => {
-			supabase.from('todos').update($todo).eq('userId', $user!.id);
+		setTodoTimer = setTimeout(async () => {
+			await supabase.from('todos').update($todo).eq('userId', $user!.id);
 		}, timeout);
 	};
 

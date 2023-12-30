@@ -44,7 +44,7 @@ const insertTodo = async (userId: string) => {
 
 const getTodo = async (event: RequestEvent) => {
     if (event.params.userId) {
-        return getTodoByUserId(event.params.userId) ?? getDefaultTodo(event.params.userId);
+        return await getTodoByUserId(event.params.userId) ?? getDefaultTodo(event.params.userId);
     }
     const userId = await getUserId();
     if (userId) {
