@@ -15,7 +15,7 @@
 		clearInterval(interval);
 		if ($todo.hasText) {
 			if ($todo.isCompleted) {
-				convertMoment(moment.unix($todo.completedAt!));
+				convertMoment(moment($todo.completedAt));
 			} else {
 				initCounter();
 			}

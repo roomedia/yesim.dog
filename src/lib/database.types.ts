@@ -11,19 +11,19 @@ export interface Database {
     Tables: {
       todos: {
         Row: {
-          completedAt: string
+          completedAt: string | null
           id: number
           text: string
           userId: string
         }
         Insert: {
-          completedAt?: string
+          completedAt?: string | null
           id?: number
           text?: string
           userId: string
         }
         Update: {
-          completedAt?: string
+          completedAt?: string | null
           id?: number
           text?: string
           userId?: string

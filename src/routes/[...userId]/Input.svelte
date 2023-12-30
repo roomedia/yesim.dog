@@ -41,7 +41,7 @@
 		if (!$isMe) {
 			return;
 		}
-		todo.set(new Todo(textarea?.value ?? ''));
+		todo.update((old) => new Todo(old.userId, old.id, textarea?.value ?? '', old.completedAt));
 		setTodoDebounced(textarea?.value ?? '');
 	};
 </script>

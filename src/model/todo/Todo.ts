@@ -1,10 +1,14 @@
 import moment from "moment";
 
 export class Todo {
+    id: number | undefined;
     text: string;
-    completedAt: number | undefined;
+    completedAt: string | null;
+    userId: string;
 
-    constructor(text: string = "", completedAt: number | undefined = undefined) {
+    constructor(userId: string, id: number | undefined = undefined, text: string = '', completedAt: string | null = null) {
+        this.userId = userId;
+        this.id = id;
         this.text = text;
         this.completedAt = completedAt;
     }
@@ -14,6 +18,6 @@ export class Todo {
     }
 
     get isCompleted(): boolean {
-        return (this.completedAt ?? 0) > moment().startOf('day').unix();
+        return moment(this.completedAt).unix() > moment().startOf('day').unix();
     }
 };

@@ -12,8 +12,8 @@
 		if (!$isMe || !$todo.hasText) {
 			return;
 		}
-		const completedAt = $todo.isCompleted ? undefined : moment().unix();
-		todo.update((old) => new Todo(old.text, completedAt));
+		const completedAt = $todo.isCompleted ? null : moment().format();
+		todo.update((old) => new Todo(old.userId, old.id, old.text, completedAt));
 		fetch('api/todo/complete', {
 			method: 'POST',
 			body: JSON.stringify({ completedAt }),
