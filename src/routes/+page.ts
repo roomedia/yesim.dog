@@ -1,6 +1,6 @@
-import { type RequestEvent } from "@sveltejs/kit";
 import { load as _load } from "./[...userId]/+page";
 
-export const load = async (event: RequestEvent) => {
-    return await _load(event);
-}
+export const csr = true;
+export const ssr = false;
+
+export const load = _load;
