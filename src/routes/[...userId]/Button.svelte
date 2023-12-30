@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { supabase } from '$lib/supabaseClient';
+	import type { User } from '@supabase/supabase-js';
 	import moment from 'moment';
 	import { getContext } from 'svelte';
 	import { type Writable } from 'svelte/store';
@@ -6,6 +8,7 @@
 	import Counter from './Counter.svelte';
 
 	export let todo: Writable<Todo>;
+	const user: Writable<User | undefined> = getContext('user');
 	const isMe: Writable<boolean> = getContext('isMe');
 
 	const toggleComplete = async () => {
@@ -14,14 +17,7 @@
 		}
 		const completedAt = $todo.isCompleted ? null : moment().format();
 		todo.update((old) => new Todo(old.userId, old.id, old.text, completedAt));
-		fetch('api/todo/complete', {
-			method: 'POST',
-			body: JSON.stringify({ completedAt }),
-			headers: {
-				'x-sveltekit-action': 'true',
-				'content-type': 'application/json'
-			}
-		});
+		await supabase.from('todos').update($todo).eq('userId', $user!.id);
 	};
 </script>
 

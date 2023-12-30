@@ -13,10 +13,16 @@ const getTodoByUserId = async (userId: string) => {
         .returns<Todo[]>()
         .limit(1);
     if (exception) {
-        console.log("getTodoByUserId error: " + exception);
+        console.error("getTodoByUserId error:")
+        console.error(exception);
         error(404, userId + " 사용자가 없습니다.");
     }
-    return data?.at(0);
+    const todo = data?.at(0);
+    if (todo) {
+        return new Todo(todo.userId, todo.id, todo.text, todo.completedAt);
+    } else {
+        return undefined;
+    }
 }
 
 const getDefaultTodo = (userId: string = '') => {
@@ -26,13 +32,14 @@ const getDefaultTodo = (userId: string = '') => {
 const getUserId = async () => {
     const { data, error } = await supabase.auth.getSession();
     if (error) {
-        console.log("getUserId error: " + error);
+        console.error("getUserId error:");
+        console.error(error);
     }
     return data.session?.user.id;
 }
 
-const insertTodo = (userId: string) => {
-    supabase.from('todos').insert(getDefaultTodo(userId));
+const insertTodo = async (userId: string) => {
+    await supabase.from('todos').insert(getDefaultTodo(userId));
 }
 
 const getTodo = async (event: RequestEvent) => {
@@ -43,7 +50,7 @@ const getTodo = async (event: RequestEvent) => {
     if (userId) {
         const todo = await getTodoByUserId(userId);
         if (!todo) {
-            insertTodo(userId);
+            await insertTodo(userId);
         }
         return todo ?? getDefaultTodo(userId);
     }

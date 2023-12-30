@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { supabase } from '$lib/supabaseClient';
+	import type { User } from '@supabase/supabase-js';
+	import { getContext } from 'svelte';
 	import { type Writable } from 'svelte/store';
 	import { Todo } from '../../model/todo/Todo';
-	import { getContext } from 'svelte';
 
 	export let todo: Writable<Todo>;
 	let textarea: HTMLTextAreaElement | undefined;
@@ -12,6 +14,7 @@
 
 	export let placeholder: string;
 	let setTodoTimer: number | undefined = undefined;
+	const user: Writable<User | undefined> = getContext('user');
 	const isMe: Writable<boolean> = getContext('isMe');
 
 	const handleResizeHeight = () => {
@@ -21,19 +24,12 @@
 		}
 	};
 
-	const setTodoDebounced = (todo: string, timeout: number = 750) => {
+	const setTodoDebounced = (timeout: number = 750) => {
 		if (setTodoTimer) {
 			clearTimeout(setTodoTimer);
 		}
 		setTodoTimer = setTimeout(() => {
-			fetch('api/todo/update', {
-				method: 'POST',
-				body: JSON.stringify({ todo }),
-				headers: {
-					'x-sveltekit-action': 'true',
-					'content-type': 'application/json'
-				}
-			});
+			supabase.from('todos').update($todo).eq('userId', $user!.id);
 		}, timeout);
 	};
 
@@ -42,7 +38,7 @@
 			return;
 		}
 		todo.update((old) => new Todo(old.userId, old.id, textarea?.value ?? '', old.completedAt));
-		setTodoDebounced(textarea?.value ?? '');
+		setTodoDebounced();
 	};
 </script>
 
