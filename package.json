@@ -32,6 +32,8 @@
 	"type": "module",
 	"dependencies": {
 		"@supabase/supabase-js": "^2.39.1",
-		"moment": "^2.30.1"
+		"clipboard": "^2.0.11",
+		"moment": "^2.30.1",
+		"svelte-french-toast": "^1.2.0"
 	}
 }

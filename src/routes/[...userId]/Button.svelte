@@ -6,6 +6,7 @@
 	import { type Writable } from 'svelte/store';
 	import { Todo } from '../../model/todo/Todo';
 	import Counter from './Counter.svelte';
+	import Sidebar from './Sidebar.svelte';
 
 	export let todo: Writable<Todo>;
 	const user: Writable<User | undefined> = getContext('user');
@@ -21,13 +22,20 @@
 	};
 </script>
 
-<button class={$isMe && $todo.hasText ? 'active' : ''} on:click={toggleComplete}>
-	<span class="emoji {$todo.isCompleted ? '' : 'gone'}" id="success">😊</span>
-	<span class="emoji {$todo.isCompleted ? 'gone' : ''}" id="failed">🐶</span>
-	<Counter {todo} />
-</button>
+<div>
+	<Sidebar {todo} />
+	<button class={$isMe && $todo.hasText ? 'active' : ''} on:click={toggleComplete}>
+		<span class="emoji {$todo.isCompleted ? '' : 'gone'}" id="success">😊</span>
+		<span class="emoji {$todo.isCompleted ? 'gone' : ''}" id="failed">🐶</span>
+		<Counter {todo} />
+	</button>
+</div>
 
 <style>
+	div {
+		display: flex;
+	}
+
 	button {
 		height: auto;
 		max-width: var(--column-width);

@@ -11,7 +11,8 @@
 	--color-theme-3: #f27b50;
 	--color-text: rgba(0, 0, 0, 0.7);
 	--color-button: #ffffff;
-	--color-button-hover: rgba(0, 0, 0, 0.2);
+	--color-button-hover: rgba(0, 0, 0, 0.1);
+	--color-sidebar: #ededed;
 	--column-width: 42rem;
 	--column-margin-top: 4rem;
 	font-family: var(--font-body);
