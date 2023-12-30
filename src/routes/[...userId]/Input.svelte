@@ -1,47 +1,48 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { writable, type Writable } from 'svelte/store';
+	import { type Writable } from 'svelte/store';
 	import { Todo } from '../../model/todo/Todo';
+	import { getContext } from 'svelte';
 
 	export let todo: Writable<Todo>;
+	let textarea: HTMLTextAreaElement | undefined;
+	$: if (textarea) {
+		textarea.value = $todo.text;
+		handleResizeHeight();
+	}
 
 	export let placeholder: string;
-	const _placeholder = writable<string>();
-	$: _placeholder.set(placeholder);
-
-	let textarea: HTMLTextAreaElement;
-	let setTodoTimer: number | null = null;
-
-	onMount(() => {
-		handleResizeHeight();
-		textarea.value = $todo.text;
-	});
+	let setTodoTimer: number | undefined = undefined;
+	const isMe: Writable<boolean> = getContext('isMe');
 
 	const handleResizeHeight = () => {
-		textarea.style.height = 'auto';
-		textarea.style.height = textarea.scrollHeight + 'px';
+		if (textarea) {
+			textarea.style.height = 'auto';
+			textarea.style.height = textarea.scrollHeight + 'px';
+		}
+	};
+
+	const setTodoDebounced = (todo: string, timeout: number = 750) => {
+		if (setTodoTimer) {
+			clearTimeout(setTodoTimer);
+		}
+		setTodoTimer = setTimeout(() => {
+			fetch('api/todo/update', {
+				method: 'POST',
+				body: JSON.stringify({ todo }),
+				headers: {
+					'x-sveltekit-action': 'true',
+					'content-type': 'application/json'
+				}
+			});
+		}, timeout);
 	};
 
 	const handleInput = () => {
-		const setTodoDebounced = (todo: string, timeout: number = 750) => {
-			if (setTodoTimer) {
-				clearTimeout(setTodoTimer);
-			}
-			setTodoTimer = setTimeout(() => {
-				fetch('api/todo/update', {
-					method: 'POST',
-					body: JSON.stringify({ todo }),
-					headers: {
-						'x-sveltekit-action': 'true',
-						'content-type': 'application/json'
-					}
-				});
-			}, timeout);
-		};
-
-		todo.set(new Todo(textarea.value));
-		setTodoDebounced(textarea.value);
-		handleResizeHeight();
+		if (!$isMe) {
+			return;
+		}
+		todo.set(new Todo(textarea?.value ?? ''));
+		setTodoDebounced(textarea?.value ?? '');
 	};
 </script>
 
@@ -51,7 +52,8 @@
 		id="todo"
 		rows="1"
 		spellcheck="false"
-		placeholder={$_placeholder}
+		{placeholder}
+		disabled={!$isMe}
 		bind:this={textarea}
 		on:input={handleInput}
 	/><br />

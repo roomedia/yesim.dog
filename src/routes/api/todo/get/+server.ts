@@ -6,7 +6,7 @@ import type { RequestEvent } from "./$types";
 
 export const _todos = new Map([
     ["1", new Todo("1", moment().unix())],
-    ["2", new Todo("2", null)],
+    ["2", new Todo("2", undefined)],
     ["3", new Todo("3", moment().unix() - 100)],
 ]);
 export const _tempTodo = writable(new Todo());

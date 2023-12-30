@@ -2,9 +2,9 @@ import moment from "moment";
 
 export class Todo {
     text: string;
-    completedAt: number | null;
+    completedAt: number | undefined;
 
-    constructor(text: string = "", completedAt: number | null = null) {
+    constructor(text: string = "", completedAt: number | undefined = undefined) {
         this.text = text;
         this.completedAt = completedAt;
     }

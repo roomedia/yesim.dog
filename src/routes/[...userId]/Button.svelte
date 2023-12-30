@@ -1,23 +1,18 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import type { User } from '@supabase/supabase-js';
 	import moment from 'moment';
-	import { getContext, hasContext } from 'svelte';
-	import { writable, type Writable } from 'svelte/store';
+	import { getContext } from 'svelte';
+	import { type Writable } from 'svelte/store';
 	import { Todo } from '../../model/todo/Todo';
 	import Counter from './Counter.svelte';
 
 	export let todo: Writable<Todo>;
-
-	const user: Writable<User | undefined> = getContext('user');
-	const isMe = writable();
-	$: isMe.set($page.route.id === "/" || $user?.id === $page.route.id);
+	const isMe: Writable<boolean> = getContext('isMe');
 
 	const toggleComplete = async () => {
 		if (!$isMe || !$todo.hasText) {
 			return;
 		}
-		const completedAt: number | null = $todo.isCompleted ? null : moment().unix();
+		const completedAt = $todo.isCompleted ? undefined : moment().unix();
 		todo.update((old) => new Todo(old.text, completedAt));
 		fetch('api/todo/complete', {
 			method: 'POST',

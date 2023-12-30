@@ -3,6 +3,7 @@
 	import type { Todo } from '../../model/todo/Todo';
 	import Button from './Button.svelte';
 	import Input from './Input.svelte';
+	import Name from './Name.svelte';
 
 	export let todo: Writable<Todo>;
 	export let placeholder: string;
@@ -14,6 +15,7 @@
 </svelte:head>
 
 <section>
+	<Name />
 	<Button {todo} />
 	<Input {todo} {placeholder} />
 </section>
