@@ -5,7 +5,7 @@
 	import type { User } from '@supabase/supabase-js';
 	import ClipboardJS from 'clipboard';
 	import { getContext } from 'svelte';
-	import toast, { Toaster } from 'svelte-french-toast';
+	import toast from 'svelte-french-toast';
 	import type { Writable } from 'svelte/store';
 	import type { Todo } from '../../model/todo/Todo';
 
@@ -70,30 +70,25 @@
 	};
 </script>
 
-<Toaster />
 <aside>
 	<ul>
-		<li><button id="surf" on:click={surf}>🌊</button></li>
+		<li><button id="surf" on:click={surf}></button></li>
 		<li>
-			<button id="share" on:click={share} data-clipboard-text={clipboardText ?? ''}>🌊</button>
+			<button id="share" on:click={share} data-clipboard-text={clipboardText ?? ''}></button>
 		</li>
 	</ul>
 </aside>
 
 <style>
-	aside {
-		margin-left: -5.65em;
-		margin-right: 1em;
-	}
-
 	ul {
 		list-style-type: none;
 		margin-block: 0;
 		margin-inline: 0;
 		padding-inline: 0;
 		padding: 0.5em;
-		border-radius: 1.75em;
-		border: 0.1px solid var(--color-sidebar);
+		border-radius: 0.75em;
+		border: 0.1px solid var(--color-border);
+		display: inline-block;
 	}
 
 	li {
@@ -101,10 +96,10 @@
 		width: 1.5em;
 		height: 1.5em;
 		cursor: pointer;
-		border: 0.1px solid var(--color-sidebar);
-		border-radius: 0.5em;
+		border: 0.1px solid var(--color-border);
+		border-radius: 0.25em;
 		margin-bottom: 0.1em;
-		display: flex;
+		display: inline-block;
 		justify-content: center;
 	}
 
@@ -115,7 +110,28 @@
 	button {
 		width: 100%;
 		height: 100%;
-		padding: 0 0.1em;
-		background-color: transparent;
+		background-size: cover;
+	}
+
+	#surf {
+		background-image: url($lib/images/surf.png);
+	}
+
+	#share {
+		background-image: url($lib/images/share.png);
+	}
+	@media (min-width: 720px) {
+		aside {
+			margin-left: -5.25em;
+			margin-right: 1em;
+		}
+
+		ul {
+			display: block;
+		}
+
+		li {
+			display: block;
+		}
 	}
 </style>

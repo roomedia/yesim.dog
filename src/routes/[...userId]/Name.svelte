@@ -4,7 +4,7 @@
 	import { supabase } from '$lib/supabaseClient';
 	import type { User } from '@supabase/supabase-js';
 	import { getContext } from 'svelte';
-	import toast, { Toaster } from 'svelte-french-toast';
+	import toast from 'svelte-french-toast';
 	import type { Writable } from 'svelte/store';
 
 	let textarea: HTMLTextAreaElement | undefined;
@@ -88,7 +88,6 @@
 	};
 </script>
 
-<Toaster />
 <textarea
 	id="name"
 	spellcheck="false"
@@ -112,6 +111,7 @@
 		color: var(--color-text);
 		font-size: 2.1rem;
 		font-weight: bold;
+		margin-bottom: 0.1em;
 	}
 
 	@media (min-width: 720px) {

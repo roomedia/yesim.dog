@@ -21,7 +21,7 @@
 	const handleResizeHeight = () => {
 		if (textarea) {
 			textarea.style.height = 'auto';
-			textarea.style.height = textarea.scrollHeight + 'px';
+			textarea.style.height = textarea.scrollHeight + 5 + 'px';
 		}
 	};
 
@@ -50,25 +50,22 @@
 	};
 </script>
 
-<h1>
-	오늘부터<br />
-	<textarea
-		id="todo"
-		rows="1"
-		spellcheck="false"
-		{placeholder}
-		disabled={!$isMe}
-		bind:this={textarea}
-		on:input={handleInput}
-	/><br />
-	내가 🐶다
-</h1>
+<h1 style="margin-bottom: 0;">오늘부터</h1>
+<textarea
+	id="todo"
+	rows="1"
+	spellcheck="false"
+	{placeholder}
+	disabled={!$isMe}
+	bind:this={textarea}
+	on:input={handleInput}
+/>
+<h1 style="margin-top: 0;">내가 🐶다</h1>
 
 <style>
 	#todo {
-		height: 53px;
+		height: 1.25em;
 		border: 0px;
-		margin: -0.2em 0 -0.4em 0;
 		resize: none;
 		outline: none;
 		background: transparent;
@@ -78,11 +75,13 @@
 		color: var(--color-text);
 		font-size: 2.1rem;
 		font-weight: bold;
+		line-height: 3rem;
 	}
 
 	@media (min-width: 720px) {
 		#todo {
 			font-size: 2.5rem;
+		line-height: 3.5rem;
 		}
 	}
 </style>

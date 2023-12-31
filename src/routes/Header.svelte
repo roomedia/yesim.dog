@@ -43,7 +43,7 @@
 	header {
 		display: flex;
 		justify-content: space-between;
-		padding: 0 3em;
+		padding: 0 1em;
 	}
 
 	.corner {
@@ -67,5 +67,11 @@
 
 	.corner button {
 		padding: 0 1em;
+	}
+
+	@media (min-width: 720px) {
+		header {
+			padding: 0 4em;
+		}
 	}
 </style>

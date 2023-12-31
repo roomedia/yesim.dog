@@ -6,11 +6,11 @@
 	import { writable } from 'svelte/store';
 	import Header from './Header.svelte';
 	import './styles.css';
+	import { Toaster } from 'svelte-french-toast';
 
 	const user = writable<User | null | undefined>(undefined);
 	const isMe = writable<boolean>();
 	$: {
-		console.log($page);
 		isMe.set($page.route.id === '/' || $user?.id === $page.params.userId);
 	}
 	setContext('user', user);
@@ -41,15 +41,11 @@
 </script>
 
 <div class="app">
+	<Toaster />
 	<Header />
-
 	<main>
 		<slot />
 	</main>
-
-	<footer>
-		<p>visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to learn SvelteKit</p>
-	</footer>
 </div>
 
 <style>
@@ -68,23 +64,5 @@
 		max-width: 64rem;
 		margin: 0 auto;
 		box-sizing: border-box;
-	}
-
-	footer {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		padding: 12px;
-	}
-
-	footer a {
-		font-weight: bold;
-	}
-
-	@media (min-width: 480px) {
-		footer {
-			padding: 12px 0;
-		}
 	}
 </style>

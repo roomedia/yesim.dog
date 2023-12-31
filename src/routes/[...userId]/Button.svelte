@@ -39,9 +39,11 @@
 
 <div>
 	<Sidebar {todo} />
-	<button class={$isMe && $todo.hasText ? 'active' : ''} on:click={toggleComplete}>
-		<span class="emoji {$todo.isCompleted ? '' : 'gone'}" id="success">😊</span>
-		<span class="emoji {$todo.isCompleted ? 'gone' : ''}" id="failed">🐶</span>
+	<button
+		class={$isMe && $todo.hasText ? 'active ' : ''}
+		id={$todo.isCompleted ? 'success' : 'failed'}
+		on:click={toggleComplete}
+	>
 		<Counter {todo} />
 	</button>
 </div>
@@ -49,34 +51,42 @@
 <style>
 	div {
 		display: flex;
+		flex-direction: column;
+	}
+
+	@media (min-width: 720px) {
+		div {
+			flex-direction: row;
+		}
 	}
 
 	button {
-		height: auto;
-		max-width: var(--column-width);
-		padding: 2em;
-		background-image: radial-gradient(
-			70% 80% at 50% 60%,
-			rgba(255, 255, 255, 0.9) 0%,
-			rgba(255, 255, 255, 0) 100%
-		);
+		width: 100vw;
+		height: 100vw;
+		background-size: cover;
 		cursor: initial;
-	}
-
-	button:hover {
-		background-blend-mode: normal;
+		display: flex;
+		align-items: flex-start;
+		justify-content: center;
+		border: 0.1px solid var(--color-border);
 	}
 
 	.active {
 		cursor: pointer;
 	}
 
-	.emoji {
-		font-size: 12em;
-		display: block;
+	#success {
+		background-image: url($lib/images/success.png);
 	}
 
-	.gone {
-		display: none;
+	#failed {
+		background-image: url($lib/images/failed.png);
+	}
+
+	@media (min-width: 720px) {
+		button {
+			width: 30em;
+			height: 30em;
+		}
 	}
 </style>

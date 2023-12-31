@@ -59,14 +59,15 @@
 
 <style>
 	strong {
+		margin-top: 0.2em;
 		font-size: 3em;
 		user-select: none;
-		align-self: end;
 		color: var(--color-text);
 	}
 
 	@media (min-width: 720px) {
 		strong {
+			margin-top: 0;
 			font-size: 4em;
 		}
 	}
