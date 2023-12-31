@@ -8,7 +8,7 @@
 	import type { Writable } from 'svelte/store';
 
 	let textarea: HTMLTextAreaElement | undefined;
-	const user: Writable<User | undefined> = getContext('user');
+	const user: Writable<User | null | undefined> = getContext('user');
 	const isMe: Writable<boolean> = getContext('isMe');
 
 	const updateTextarea = (text: string) => {
@@ -56,13 +56,18 @@
 			});
 	};
 
-	$: if ($page && $user && textarea) {
-		const userId = $page.params.userId ? $page.params.userId : $user.id;
-		getNickname(userId);
+	$: if ($page && $user !== undefined && textarea) {
+		const userId = $page.params.userId ? $page.params.userId : $user?.id;
+		if (userId) {
+			getNickname(userId);
+		} else {
+			textarea.value = '낯선이';
+		}
 	}
 
 	const debouncer = makeDebouncer(async () => {
 		if (!$user || !$isMe) {
+			toast.error('로그인해야 닉네임을 변경할 수 있습니다!');
 			return;
 		}
 		const { error } = await supabase
@@ -104,7 +109,6 @@
 		background: transparent;
 		overflow: hidden;
 		text-align: center;
-		text-decoration: underline wavy var(--color-theme-1);
 		color: var(--color-text);
 		font-size: 2.1rem;
 		font-weight: bold;

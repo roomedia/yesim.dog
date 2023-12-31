@@ -3,22 +3,22 @@
 	import { page } from '$app/stores';
 	import logo from '$lib/images/d-dog-logo.png';
 	import { supabase } from '$lib/supabaseClient';
-	import type { User } from "@supabase/supabase-js";
+	import type { User } from '@supabase/supabase-js';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 
-	const user: Writable<User | undefined> = getContext("user");
+	const user: Writable<User | null | undefined> = getContext('user');
 
 	const login = async () => {
-		goto("login");
-	}
+		goto('login');
+	};
 
 	const logout = async () => {
 		const { error } = await supabase.auth.signOut();
 		if (error) {
 			alert(error);
 		}
-	}
+	};
 </script>
 
 <header>
@@ -28,14 +28,14 @@
 		</a>
 	</div>
 
-	{#if $page.route.id !== "/login"}
-	<div class="corner">
-		{#if $user}
-		<button on:click={logout}>로그아웃</button>
-		{:else}
-		<button on:click={login}>로그인하여 공유</button>
-		{/if}
-	</div>
+	{#if $page.route.id !== '/login'}
+		<div class="corner">
+			{#if $user}
+				<button on:click={logout}>로그아웃</button>
+			{:else}
+				<button on:click={login}>로그인</button>
+			{/if}
+		</div>
 	{/if}
 </header>
 

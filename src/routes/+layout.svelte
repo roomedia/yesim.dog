@@ -1,31 +1,37 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { supabase } from '$lib/supabaseClient';
-	import type { User } from '@supabase/supabase-js';
+	import type { Session, User } from '@supabase/supabase-js';
 	import { onMount, setContext } from 'svelte';
 	import { writable } from 'svelte/store';
 	import Header from './Header.svelte';
 	import './styles.css';
 
-	const user = writable<User | undefined>();
+	const user = writable<User | null | undefined>(undefined);
 	const isMe = writable<boolean>();
-	$: isMe.set($page.route.id === '/' || $user?.id === $page.route.id);
+	$: {
+		console.log($page);
+		isMe.set($page.route.id === '/' || $user?.id === $page.params.userId);
+	}
 	setContext('user', user);
 	setContext('isMe', isMe);
 
+	const setUser = (session: Session | null) => {
+		const newUser = session?.user ?? null;
+		if ($user !== newUser) {
+			user.set(newUser);
+		}
+	};
+
 	onMount(() => {
 		supabase.auth.getSession().then(({ data: { session } }) => {
-			if ($user !== session?.user) {
-				user.set(session?.user);
-			}
+			setUser(session);
 		});
 
 		const {
 			data: { subscription: authListener }
 		} = supabase.auth.onAuthStateChange((_, session) => {
-			if ($user !== session?.user) {
-				user.set(session?.user);
-			}
+			setUser(session);
 		});
 
 		return () => {

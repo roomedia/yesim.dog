@@ -15,7 +15,7 @@
 	}
 
 	export let placeholder: string;
-	const user: Writable<User | undefined> = getContext('user');
+	const user: Writable<User | null | undefined> = getContext('user');
 	const isMe: Writable<boolean> = getContext('isMe');
 
 	const handleResizeHeight = () => {
@@ -26,13 +26,16 @@
 	};
 
 	const debouncer = makeDebouncer(async () => {
-		const {error} = await supabase.from('todos').update($todo).eq('userId', $user!.id);
+		if (!$user) {
+			return;
+		}
+		const { error } = await supabase.from('todos').update($todo).eq('userId', $user.id);
 		if (error) {
 			console.error('todo update error');
 			console.error(error);
-			toast.error('올해 다짐 업데이트 실패..');
+			toast.error('올해 다짐 업데이트 실패..\n새로고침 후 다시 시도해주세요');
 		} else {
-			toast.success('올해 다짐 업데이트 성공!');
+			toast.success('올해 다짐 업데이트!');
 		}
 	});
 
@@ -41,7 +44,9 @@
 			return;
 		}
 		todo.update((old) => new Todo(old.userId, old.id, textarea?.value ?? '', old.completedAt));
-		debouncer();
+		if ($user) {
+			debouncer();
+		}
 	};
 </script>
 
