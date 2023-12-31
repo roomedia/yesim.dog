@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Writable } from 'svelte/store';
-	import type { Todo } from '../../model/todo/Todo';
+	import type { Todo } from '../model/todo/Todo';
 	import Button from './Button.svelte';
 	import Input from './Input.svelte';
 	import Name from './Name.svelte';

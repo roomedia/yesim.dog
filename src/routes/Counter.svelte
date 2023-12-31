@@ -1,7 +1,7 @@
 <script lang="ts">
 	import moment, { type Moment } from 'moment';
 	import { writable, type Writable } from 'svelte/store';
-	import type { Todo } from '../../model/todo/Todo';
+	import type { Todo } from '../model/todo/Todo';
 
 	export let todo: Writable<Todo>;
 

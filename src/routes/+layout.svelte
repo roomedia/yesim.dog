@@ -8,10 +8,11 @@
 	import './styles.css';
 	import { Toaster } from 'svelte-french-toast';
 
+	export const prerencer = true;
 	const user = writable<User | null | undefined>(undefined);
 	const isMe = writable<boolean>();
 	$: {
-		isMe.set($page.route.id === '/' || $user?.id === $page.params.userId);
+		isMe.set($page.route.id === '/' || $user?.id === $page.url.searchParams.get('userId'));
 	}
 	setContext('user', user);
 	setContext('isMe', isMe);

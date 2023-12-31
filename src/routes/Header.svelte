@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import logo from '$lib/images/d-dog-logo.png';
+	import logo from '$lib/images/logo.png';
 	import { supabase } from '$lib/supabaseClient';
 	import type { User } from '@supabase/supabase-js';
 	import { getContext } from 'svelte';

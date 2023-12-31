@@ -4,10 +4,10 @@
 	import moment from 'moment';
 	import { getContext } from 'svelte';
 	import { type Writable } from 'svelte/store';
-	import { Todo } from '../../model/todo/Todo';
 	import Counter from './Counter.svelte';
 	import Sidebar from './Sidebar.svelte';
 	import toast from 'svelte-french-toast';
+	import { Todo } from '../model/todo/Todo';
 
 	export let todo: Writable<Todo>;
 	const user: Writable<User | null | undefined> = getContext('user');

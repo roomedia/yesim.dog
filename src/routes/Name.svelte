@@ -57,7 +57,7 @@
 	};
 
 	$: if ($page && $user !== undefined && textarea) {
-		const userId = $page.params.userId ? $page.params.userId : $user?.id;
+		const userId = $page.url.searchParams.get('userId') ?? $user?.id;
 		if (userId) {
 			getNickname(userId);
 		} else {

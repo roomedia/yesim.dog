@@ -5,10 +5,10 @@
 	let previousPage: string = '/';
 
 	afterNavigate(({ from }) => {
-		previousPage = from?.url?.pathname ?? '/';
+		previousPage = from?.url?.toString() ?? '/';
 	});
 
-	window.handleSignInWithGoogle = async ({ credential }) => {
+	globalThis.handleSignInWithGoogle = async ({ credential }) => {
 		await supabase.auth.signInWithIdToken({
 			provider: 'google',
 			token: credential,

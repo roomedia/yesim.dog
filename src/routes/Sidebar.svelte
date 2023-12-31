@@ -3,17 +3,16 @@
 	import { page } from '$app/stores';
 	import { supabase } from '$lib/supabaseClient';
 	import type { User } from '@supabase/supabase-js';
-	import ClipboardJS from 'clipboard';
 	import { getContext } from 'svelte';
 	import toast from 'svelte-french-toast';
 	import type { Writable } from 'svelte/store';
-	import type { Todo } from '../../model/todo/Todo';
+	import type { Todo } from '../model/todo/Todo';
 
 	export let todo: Writable<Todo>;
 	const user: Writable<User | null | undefined> = getContext('user');
 	let userId: string | undefined;
 	$: if ($user !== undefined) {
-		userId = $page.params.userId ?? $user?.id;
+		userId = $page.url.searchParams.get('userId') ?? $user?.id;
 	}
 	let clipboardText: string | undefined = undefined;
 	$: if (userId) {
@@ -37,15 +36,15 @@
 	} else {
 		clipboardText = undefined;
 	}
-	new ClipboardJS('#share');
 
 	const surf = async () => {
 		const request = supabase.from('randomUsers').select('id');
 		if ($user) {
 			request.neq('id', $user.id);
 		}
-		if ($page.params.userId) {
-			request.neq('id', $page.params.userId);
+		const userIdParams = $page.url.searchParams.get('userId');
+		if (userIdParams) {
+			request.neq('id', userIdParams);
 		}
 		const { data, error } = await request.limit(1).maybeSingle();
 		if (error) {
@@ -55,7 +54,7 @@
 			return;
 		}
 		if (data) {
-			goto(data.id);
+			goto('/?userId=' + data.id);
 		} else {
 			toast.error('파도타기 실패! 더 이상 갈 곳이 없어요..');
 		}
@@ -70,6 +69,10 @@
 	};
 </script>
 
+<svelte:head>
+	<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
+</svelte:head>
+
 <aside>
 	<ul>
 		<li><button id="surf" on:click={surf}></button></li>
@@ -77,6 +80,9 @@
 			<button id="share" on:click={share} data-clipboard-text={clipboardText ?? ''}></button>
 		</li>
 	</ul>
+	<script>
+		new ClipboardJS('#share');
+	</script>
 </aside>
 
 <style>

@@ -4,7 +4,7 @@
 	import type { User } from '@supabase/supabase-js';
 	import { getContext } from 'svelte';
 	import { type Writable } from 'svelte/store';
-	import { Todo } from '../../model/todo/Todo';
+	import { Todo } from '../model/todo/Todo';
 	import toast from 'svelte-french-toast';
 
 	export let todo: Writable<Todo>;
