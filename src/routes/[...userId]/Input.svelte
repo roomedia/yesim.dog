@@ -1,9 +1,11 @@
 <script lang="ts">
+	import { makeDebouncer } from '$lib/debouncer';
 	import { supabase } from '$lib/supabaseClient';
 	import type { User } from '@supabase/supabase-js';
 	import { getContext } from 'svelte';
 	import { type Writable } from 'svelte/store';
 	import { Todo } from '../../model/todo/Todo';
+	import toast from 'svelte-french-toast';
 
 	export let todo: Writable<Todo>;
 	let textarea: HTMLTextAreaElement | undefined;
@@ -13,7 +15,6 @@
 	}
 
 	export let placeholder: string;
-	let setTodoTimer: number | undefined = undefined;
 	const user: Writable<User | undefined> = getContext('user');
 	const isMe: Writable<boolean> = getContext('isMe');
 
@@ -24,21 +25,23 @@
 		}
 	};
 
-	const setTodoDebounced = (timeout: number = 750) => {
-		if (setTodoTimer) {
-			clearTimeout(setTodoTimer);
+	const debouncer = makeDebouncer(async () => {
+		const {error} = await supabase.from('todos').update($todo).eq('userId', $user!.id);
+		if (error) {
+			console.error('todo update error');
+			console.error(error);
+			toast.error('올해 다짐 업데이트 실패..');
+		} else {
+			toast.success('올해 다짐 업데이트 성공!');
 		}
-		setTodoTimer = setTimeout(async () => {
-			await supabase.from('todos').update($todo).eq('userId', $user!.id);
-		}, timeout);
-	};
+	});
 
 	const handleInput = () => {
 		if (!$isMe) {
 			return;
 		}
 		todo.update((old) => new Todo(old.userId, old.id, textarea?.value ?? '', old.completedAt));
-		setTodoDebounced();
+		debouncer();
 	};
 </script>
 

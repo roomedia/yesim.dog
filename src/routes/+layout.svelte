@@ -15,13 +15,17 @@
 
 	onMount(() => {
 		supabase.auth.getSession().then(({ data: { session } }) => {
-			user.set(session?.user);
+			if ($user !== session?.user) {
+				user.set(session?.user);
+			}
 		});
 
 		const {
 			data: { subscription: authListener }
 		} = supabase.auth.onAuthStateChange((_, session) => {
-			user.set(session?.user);
+			if ($user !== session?.user) {
+				user.set(session?.user);
+			}
 		});
 
 		return () => {
