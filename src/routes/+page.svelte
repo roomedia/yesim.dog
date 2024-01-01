@@ -45,9 +45,12 @@
 	};
 
 	const getTodo = async (userIdParams: string | null) => {
-		const userId = userIdParams ?? (await getUserId());
+		if (userIdParams) {
+			return await getTodoByUserId(userIdParams);
+		}
+		const userId = await getUserId();
 		if (userId) {
-			return (await getTodoByUserId(userId)) ?? insertTodo(userId);
+			return await getTodoByUserId(userId) ?? insertTodo(userId);
 		}
 		return null;
 	};
