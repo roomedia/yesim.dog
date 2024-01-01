@@ -28,7 +28,7 @@
 
 <header>
 	<div class="corner">
-		<a data-sveltekit-reload href="/">
+		<a data-sveltekit-reload href="{base}/">
 			<img src={logo} alt="yesim.dog" />
 		</a>
 	</div>
