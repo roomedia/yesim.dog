@@ -5,6 +5,7 @@
 	import { supabase } from '$lib/supabaseClient';
 	import type { User } from '@supabase/supabase-js';
 	import { getContext } from 'svelte';
+	import toast from 'svelte-french-toast';
 	import type { Writable } from 'svelte/store';
 
 	const user: Writable<User | null | undefined> = getContext('user');
@@ -16,8 +17,11 @@
 	const logout = async () => {
 		const { error } = await supabase.auth.signOut();
 		if (error) {
-			alert(error);
+			console.error('error on logout');
+			console.error(error);
+			toast.error('로그아웃 실패..\n새로고침 후 다시 시도해주세요');
 		}
+		goto(window.location.href, { invalidateAll: true });
 	};
 </script>
 
