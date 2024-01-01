@@ -3,11 +3,13 @@
 	import { supabase } from '$lib/supabaseClient';
 	import type { User } from '@supabase/supabase-js';
 	import { getContext } from 'svelte';
-	import { type Writable } from 'svelte/store';
-	import { Todo } from '../model/todo/Todo';
 	import toast from 'svelte-french-toast';
+	import { type Writable } from 'svelte/store';
+	import { CompletedAt, Todo } from '../model/todo/Todo';
+	import moment from 'moment';
 
-	export let todo: Writable<Todo | undefined>;
+	export let todo: Writable<Todo | null>;
+	export let completedAt: Writable<CompletedAt | null>;
 	let textarea: HTMLTextAreaElement | undefined;
 	$: if (textarea) {
 		textarea.value = $todo?.text ?? '';
@@ -26,24 +28,41 @@
 	};
 
 	const debouncer = makeDebouncer(async () => {
-		if (!$user || !$todo) {
+		if (!$user || !$todo || !$completedAt) {
 			return;
 		}
-		const { error } = await supabase.from('todos').update($todo).eq('userId', $user.id);
-		if (error) {
+		const { error: todoError } = await supabase
+			.from('todo')
+			.update($todo)
+			.eq('userId', $todo.userId);
+		const { error: completedAtError } = await supabase.from('completedAt').upsert({
+			date: $completedAt.date,
+			todoId: $completedAt.todoId!,
+			completedAt: $completedAt.completedAt,
+			userId: $completedAt.userId!
+		});
+		if (todoError || completedAtError) {
 			console.error('todo update error');
-			console.error(error);
+			console.error(todoError);
 			toast.error('올해 다짐 업데이트 실패..\n새로고침 후 다시 시도해주세요');
-		} else {
-			toast.success('올해 다짐 업데이트!');
+			return;
 		}
+		toast.success('올해 다짐 업데이트!');
 	});
 
 	const handleInput = () => {
-		if (!$isMe || !$todo) {
+		if (!$isMe) {
 			return;
 		}
-		todo.update((old) => new Todo(old!.userId, undefined, textarea?.value ?? ''));
+		todo?.update((old) => new Todo(old?.userId ?? $user?.id ?? '', old?.id, textarea?.value ?? ''));
+		completedAt.update((old) => {
+			return new CompletedAt(
+				$user?.id,
+				$todo?.id,
+				old?.date ?? moment().startOf('day').format(),
+				null
+			);
+		});
 		if ($user) {
 			debouncer();
 		}
@@ -81,7 +100,7 @@
 	@media (min-width: 720px) {
 		#todo {
 			font-size: 2.5rem;
-		line-height: 3.5rem;
+			line-height: 3.5rem;
 		}
 	}
 </style>

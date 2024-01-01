@@ -8,15 +8,15 @@
 	import type { Writable } from 'svelte/store';
 	import type { Todo } from '../model/todo/Todo';
 
-	export let todo: Writable<Todo | undefined>;
+	export let todo: Writable<Todo | null>;
 	const user: Writable<User | null | undefined> = getContext('user');
 	let userId: string | undefined;
 	$: if ($user !== undefined) {
 		userId = $page.url.searchParams.get('userId') ?? $user?.id;
 	}
 	let clipboardText: string | undefined = undefined;
-	$: if (userId && $todo) {
-		const template = '오늘부터 ' + $todo.text + ' 내가 개다\n' + $page.url.origin + '/' + userId;
+	$: if (userId) {
+		const template = '오늘부터 ' + ($todo?.text ?? '그냥') + ' 내가 개다\n' + $page.url.origin + '/?userId=' + userId;
 		supabase
 			.from('nickname')
 			.select('nickname')

@@ -9,28 +9,112 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      todos: {
+      completedAt: {
         Row: {
           completedAt: string | null
+          date: string
+          todoId: number
+          userId: string
+        }
+        Insert: {
+          completedAt?: string | null
+          date?: string
+          todoId: number
+          userId: string
+        }
+        Update: {
+          completedAt?: string | null
+          date?: string
+          todoId?: number
+          userId?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "completedAt_todoId_fkey"
+            columns: ["todoId"]
+            isOneToOne: false
+            referencedRelation: "todo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "completedAt_todoId_fkey"
+            columns: ["todoId"]
+            isOneToOne: false
+            referencedRelation: "todoWithCompletedAt"
+            referencedColumns: ["todoId"]
+          },
+          {
+            foreignKeyName: "completedAt_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "randomUsers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "completedAt_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      nickname: {
+        Row: {
+          nickname: string
+          userId: string
+        }
+        Insert: {
+          nickname?: string
+          userId: string
+        }
+        Update: {
+          nickname?: string
+          userId?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nickname_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: true
+            referencedRelation: "randomUsers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nickname_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      todo: {
+        Row: {
           id: number
           text: string
           userId: string
         }
         Insert: {
-          completedAt?: string | null
           id?: number
           text?: string
           userId: string
         }
         Update: {
-          completedAt?: string | null
           id?: number
           text?: string
           userId?: string
         }
         Relationships: [
           {
-            foreignKeyName: "todos_userId_fkey"
+            foreignKeyName: "todo_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "randomUsers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "todo_userId_fkey"
             columns: ["userId"]
             isOneToOne: false
             referencedRelation: "users"
@@ -40,7 +124,43 @@ export interface Database {
       }
     }
     Views: {
-      [_ in never]: never
+      randomUsers: {
+        Row: {
+          id: string | null
+        }
+        Insert: {
+          id?: string | null
+        }
+        Update: {
+          id?: string | null
+        }
+        Relationships: []
+      }
+      todoWithCompletedAt: {
+        Row: {
+          completedAt: string | null
+          date: string
+          text: string
+          todoId: number
+          userId: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "todo_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "todo_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "randomUsers"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Functions: {
       [_ in never]: never

@@ -3,12 +3,12 @@
 	import { supabase } from '$lib/supabaseClient';
 	import { error } from '@sveltejs/kit';
 	import { writable, type Writable } from 'svelte/store';
-	import { Todo } from '../model/todo/Todo';
+	import { CompletedAt, Todo } from '../model/todo/Todo';
 	import TodoPage from './TodoPage.svelte';
 
 	const getTodoByUserId = async (userId: string) => {
 		const { data, error: exception } = await supabase
-			.from('todos')
+			.from('todo')
 			.select('*')
 			.eq('userId', userId)
 			.limit(1);
@@ -19,14 +19,10 @@
 		}
 		const todo = data?.at(0);
 		if (todo) {
-			return new Todo(todo.userId, todo.id, todo.text, todo.completedAt);
+			return new Todo(todo.userId, todo.id, todo.text);
 		} else {
-			return undefined;
+			return null;
 		}
-	};
-
-	const getDefaultTodo = (userId: string = '') => {
-		return new Todo(userId);
 	};
 
 	const getUserId = async () => {
@@ -39,27 +35,68 @@
 	};
 
 	const insertTodo = async (userId: string) => {
-		await supabase.from('todos').insert(getDefaultTodo(userId));
+		const { data } = await supabase
+			.from('todo')
+			.insert(new Todo(userId))
+			.select()
+			.returns<Todo[]>()
+			.single();
+		return data;
 	};
 
-	const getTodo = async () => {
-		const userIdParams = $page.url.searchParams.get('userId');
-		if (userIdParams) {
-			return (await getTodoByUserId(userIdParams)) ?? getDefaultTodo(userIdParams);
-		}
-		const userId = await getUserId();
+	const getTodo = async (userIdParams: string | null) => {
+		const userId = userIdParams ?? (await getUserId());
 		if (userId) {
-			const todo = await getTodoByUserId(userId);
-			if (!todo) {
-				await insertTodo(userId);
-			}
-			return todo ?? getDefaultTodo(userId);
+			return (await getTodoByUserId(userId)) ?? insertTodo(userId);
 		}
-		return getDefaultTodo('');
+		return null;
 	};
 
-	const todo: Writable<Todo | undefined> = writable();
-	$: getTodo().then((value) => todo.set(value));
+	const getCompletedAtByTodo = async (todo: Todo) => {
+		const { data, error: exception } = await supabase
+			.from('completedAt')
+			.select('*')
+			.eq('userId', todo.userId)
+			.eq('todoId', todo.id!)
+			.limit(1);
+		if (exception) {
+			console.error('getTodoByUserId error:');
+			console.error(exception);
+			error(404, todo.userId + ' 사용자가 없습니다.');
+		}
+		const completedAt = data?.at(0);
+		if (completedAt) {
+			return new CompletedAt(
+				completedAt.userId,
+				completedAt.todoId,
+				completedAt.date,
+				completedAt.completedAt
+			);
+		} else {
+			return null;
+		}
+	};
+
+	const getCompletedAt = async (todo: Todo) => {
+		if (todo.userId !== '' && todo.id) {
+			return await getCompletedAtByTodo(todo);
+		}
+		return null;
+	};
+
+	const todo: Writable<Todo | null> = writable();
+	const completedAt: Writable<CompletedAt | null> = writable();
+	$: {
+		getTodo($page.url.searchParams.get('userId'))
+		.then((value) => {
+			todo.set(value);
+			if (value) {
+			getCompletedAt(value).then((value) => completedAt.set(value));
+			} else {
+				completedAt.set(null)
+			}
+		});
+	}
 </script>
 
-<TodoPage {todo} placeholder={$page.data.placeholder} />
+<TodoPage {todo} {completedAt} placeholder={$page.data.placeholder} />

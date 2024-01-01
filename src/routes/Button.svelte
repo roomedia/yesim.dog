@@ -3,13 +3,14 @@
 	import type { User } from '@supabase/supabase-js';
 	import moment from 'moment';
 	import { getContext } from 'svelte';
+	import toast from 'svelte-french-toast';
 	import { type Writable } from 'svelte/store';
+	import { CompletedAt, type Todo } from '../model/todo/Todo';
 	import Counter from './Counter.svelte';
 	import Sidebar from './Sidebar.svelte';
-	import toast from 'svelte-french-toast';
-	import { Todo } from '../model/todo/Todo';
 
-	export let todo: Writable<Todo |undefined>;
+	export let todo: Writable<Todo | null>;
+	export let completedAt: Writable<CompletedAt | null>;
 	const user: Writable<User | null | undefined> = getContext('user');
 	const isMe: Writable<boolean> = getContext('isMe');
 
@@ -17,22 +18,38 @@
 		if (!$isMe || !$todo?.hasText) {
 			return;
 		}
-		const completedAt = $todo.isCompleted ? null : moment().format();
-		todo.update((old) => new Todo(old!.userId, old!.id, old!.text, completedAt));
+		completedAt.update((old) => {
+			return new CompletedAt(
+				$user?.id,
+				$todo?.id,
+				old?.date ?? moment().startOf('day').format(),
+				old?.isCompleted ? null : moment().format()
+			);
+		});
 		if (!$user) {
 			toast.error('로그인해야 다짐을 완료할 수 있습니다!');
 			return;
 		}
-		if ($todo.completedAt) {
-			toast.success('오늘의 다짐을 지켰어요!!');
-		} else {
-			toast('까먹은 내용이 있나요?', { icon: '🐶' });
+		if (!$completedAt) {
+			toast.error('로그인해야 다짐을 완료할 수 있습니다!');
+			return;
 		}
-		const { error } = await supabase.from('todos').update($todo).eq('userId', $user.id);
+		const { error } = await supabase.from('completedAt').upsert({
+			date: $completedAt.date,
+			todoId: $completedAt.todoId!,
+			completedAt: $completedAt.completedAt,
+			userId: $completedAt.userId!
+		});
 		if (error) {
 			console.error('todo complete error:');
 			console.error(error);
 			toast.error('다짐 업데이트 실패..\n새로고침 후 다시 시도해주세요');
+			return;
+		}
+		if ($completedAt?.completedAt) {
+			toast.success('오늘의 다짐을 지켰어요!!');
+		} else {
+			toast('까먹은 내용이 있나요?', { icon: '🐶' });
 		}
 	};
 </script>
@@ -41,10 +58,10 @@
 	<Sidebar {todo} />
 	<button
 		class={$isMe && $todo?.hasText ? 'active ' : ''}
-		id={$todo?.isCompleted ? 'success' : 'failed'}
+		id={$completedAt?.isCompleted ? 'success' : 'failed'}
 		on:click={toggleComplete}
 	>
-		<Counter {todo} />
+		<Counter {todo} {completedAt} />
 	</button>
 </div>
 

@@ -1,9 +1,10 @@
 <script lang="ts">
 	import moment, { type Moment } from 'moment';
 	import { writable, type Writable } from 'svelte/store';
-	import type { Todo } from '../model/todo/Todo';
+	import type { CompletedAt, Todo } from '../model/todo/Todo';
 
-	export let todo: Writable<Todo | undefined>;
+	export let todo: Writable<Todo | null>;
+	export let completedAt: Writable<CompletedAt | null>;
 
 	const hours = writable(0);
 	const minutes = writable(0);
@@ -14,8 +15,8 @@
 	$: {
 		clearInterval(interval);
 		if ($todo?.hasText) {
-			if ($todo.isCompleted) {
-				convertMoment(moment($todo.completedAt));
+			if ($completedAt?.isCompleted) {
+				convertMoment(moment($completedAt.completedAt));
 			} else {
 				initCounter();
 			}

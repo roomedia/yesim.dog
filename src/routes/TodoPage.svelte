@@ -1,11 +1,12 @@
 <script lang="ts">
 	import type { Writable } from 'svelte/store';
-	import type { Todo } from '../model/todo/Todo';
+	import type { CompletedAt, Todo } from '../model/todo/Todo';
 	import Button from './Button.svelte';
 	import Input from './Input.svelte';
 	import Name from './Name.svelte';
 
-	export let todo: Writable<Todo | undefined>;
+	export let todo: Writable<Todo | null>;
+	export let completedAt: Writable<CompletedAt | null>;
 	export let placeholder: string;
 </script>
 
@@ -16,8 +17,8 @@
 
 <section>
 	<Name />
-	<Button {todo} />
-	<Input {todo} {placeholder} />
+	<Button {todo} {completedAt} />
+	<Input {todo} {completedAt} {placeholder} />
 </section>
 
 <style>

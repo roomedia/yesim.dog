@@ -3,15 +3,16 @@
 	import { supabase } from '$lib/supabaseClient';
 	import type { Session, User } from '@supabase/supabase-js';
 	import { onMount, setContext } from 'svelte';
+	import { Toaster } from 'svelte-french-toast';
 	import { writable } from 'svelte/store';
 	import Header from './Header.svelte';
 	import './styles.css';
-	import { Toaster } from 'svelte-french-toast';
 
 	const user = writable<User | null | undefined>(undefined);
 	const isMe = writable<boolean>();
 	$: {
-		isMe.set($page.route.id === '/' || $user?.id === $page.url.searchParams.get('userId'));
+		const userId = $page.url.searchParams.get('userId');
+		isMe.set(!userId || $user?.id === userId);
 	}
 	setContext('user', user);
 	setContext('isMe', isMe);
