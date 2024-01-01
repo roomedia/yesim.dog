@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { base } from '$app/paths';
 	import { page } from '$app/stores';
 	import logo from '$lib/images/logo.png';
 	import { supabase } from '$lib/supabaseClient';
@@ -11,7 +12,7 @@
 	const user: Writable<User | null | undefined> = getContext('user');
 
 	const login = async () => {
-		goto('login');
+		goto(base + '/login');
 	};
 
 	const logout = async () => {

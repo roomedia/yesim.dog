@@ -7,6 +7,7 @@
 	import toast from 'svelte-french-toast';
 	import type { Writable } from 'svelte/store';
 	import type { Todo } from '../model/todo/Todo';
+	import { base } from '$app/paths';
 
 	export let todo: Writable<Todo | null>;
 	const user: Writable<User | null | undefined> = getContext('user');
@@ -54,7 +55,7 @@
 			return;
 		}
 		if (data) {
-			goto('/?userId=' + data.id);
+			goto(base + '/?userId=' + data.id);
 		} else {
 			toast.error('파도타기 실패! 더 이상 갈 곳이 없어요..');
 		}

@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { afterNavigate, goto } from '$app/navigation';
+	import { base } from '$app/paths';
 	import { supabase } from '$lib/supabaseClient';
 
-	let previousPage: string = '/';
+	let previousPage: string = base;
 
 	afterNavigate(({ from }) => {
-		previousPage = from?.url?.toString() ?? '/';
+		previousPage = from?.url?.toString() ?? base;
 	});
 
 	globalThis.handleSignInWithGoogle = async ({ credential }) => {
