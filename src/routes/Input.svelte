@@ -7,10 +7,10 @@
 	import { Todo } from '../model/todo/Todo';
 	import toast from 'svelte-french-toast';
 
-	export let todo: Writable<Todo>;
+	export let todo: Writable<Todo | undefined>;
 	let textarea: HTMLTextAreaElement | undefined;
 	$: if (textarea) {
-		textarea.value = $todo.text;
+		textarea.value = $todo?.text ?? '';
 		handleResizeHeight();
 	}
 
@@ -26,7 +26,7 @@
 	};
 
 	const debouncer = makeDebouncer(async () => {
-		if (!$user) {
+		if (!$user || !$todo) {
 			return;
 		}
 		const { error } = await supabase.from('todos').update($todo).eq('userId', $user.id);
@@ -40,10 +40,10 @@
 	});
 
 	const handleInput = () => {
-		if (!$isMe) {
+		if (!$isMe || !$todo) {
 			return;
 		}
-		todo.update((old) => new Todo(old.userId, old.id, textarea?.value ?? '', old.completedAt));
+		todo.update((old) => new Todo(old!.userId, undefined, textarea?.value ?? ''));
 		if ($user) {
 			debouncer();
 		}

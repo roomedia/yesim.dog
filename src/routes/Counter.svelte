@@ -3,7 +3,7 @@
 	import { writable, type Writable } from 'svelte/store';
 	import type { Todo } from '../model/todo/Todo';
 
-	export let todo: Writable<Todo>;
+	export let todo: Writable<Todo | undefined>;
 
 	const hours = writable(0);
 	const minutes = writable(0);
@@ -13,7 +13,7 @@
 	let interval: number;
 	$: {
 		clearInterval(interval);
-		if ($todo.hasText) {
+		if ($todo?.hasText) {
 			if ($todo.isCompleted) {
 				convertMoment(moment($todo.completedAt));
 			} else {
@@ -53,7 +53,7 @@
 	};
 </script>
 
-<strong class={$todo.hasText ? 'active' : ''}>
+<strong class={$todo?.hasText ? 'active' : ''}>
 	{padding($hours)}:{padding($minutes)}:{padding($seconds)}.{padding($milliseconds, 3)}
 </strong>
 

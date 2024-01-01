@@ -9,16 +9,16 @@
 	import toast from 'svelte-french-toast';
 	import { Todo } from '../model/todo/Todo';
 
-	export let todo: Writable<Todo>;
+	export let todo: Writable<Todo |undefined>;
 	const user: Writable<User | null | undefined> = getContext('user');
 	const isMe: Writable<boolean> = getContext('isMe');
 
 	const toggleComplete = async () => {
-		if (!$isMe || !$todo.hasText) {
+		if (!$isMe || !$todo?.hasText) {
 			return;
 		}
 		const completedAt = $todo.isCompleted ? null : moment().format();
-		todo.update((old) => new Todo(old.userId, old.id, old.text, completedAt));
+		todo.update((old) => new Todo(old!.userId, old!.id, old!.text, completedAt));
 		if (!$user) {
 			toast.error('로그인해야 다짐을 완료할 수 있습니다!');
 			return;
@@ -40,8 +40,8 @@
 <div>
 	<Sidebar {todo} />
 	<button
-		class={$isMe && $todo.hasText ? 'active ' : ''}
-		id={$todo.isCompleted ? 'success' : 'failed'}
+		class={$isMe && $todo?.hasText ? 'active ' : ''}
+		id={$todo?.isCompleted ? 'success' : 'failed'}
 		on:click={toggleComplete}
 	>
 		<Counter {todo} />

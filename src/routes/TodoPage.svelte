@@ -5,13 +5,13 @@
 	import Input from './Input.svelte';
 	import Name from './Name.svelte';
 
-	export let todo: Writable<Todo>;
+	export let todo: Writable<Todo | undefined>;
 	export let placeholder: string;
 </script>
 
 <svelte:head>
-	<title>디독: 작심삼일 내가 🐶다</title>
-	<meta name="description" content="디독: 작심삼일 내가 🐶다" />
+	<title>그래 내가 🐶다</title>
+	<meta name="description" content="그래 내가 🐶다" />
 </svelte:head>
 
 <section>

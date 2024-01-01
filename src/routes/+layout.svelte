@@ -8,7 +8,6 @@
 	import './styles.css';
 	import { Toaster } from 'svelte-french-toast';
 
-	export const prerencer = true;
 	const user = writable<User | null | undefined>(undefined);
 	const isMe = writable<boolean>();
 	$: {

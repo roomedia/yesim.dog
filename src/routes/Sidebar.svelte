@@ -8,14 +8,14 @@
 	import type { Writable } from 'svelte/store';
 	import type { Todo } from '../model/todo/Todo';
 
-	export let todo: Writable<Todo>;
+	export let todo: Writable<Todo | undefined>;
 	const user: Writable<User | null | undefined> = getContext('user');
 	let userId: string | undefined;
 	$: if ($user !== undefined) {
 		userId = $page.url.searchParams.get('userId') ?? $user?.id;
 	}
 	let clipboardText: string | undefined = undefined;
-	$: if (userId) {
+	$: if (userId && $todo) {
 		const template = '오늘부터 ' + $todo.text + ' 내가 개다\n' + $page.url.origin + '/' + userId;
 		supabase
 			.from('nickname')
@@ -69,8 +69,16 @@
 	};
 </script>
 
+<!-- svelte-ignore missing-declaration -->
 <svelte:head>
-	<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"
+		async
+		defer
+		on:load={() => {
+			new ClipboardJS('#share');
+		}}
+	></script>
 </svelte:head>
 
 <aside>
@@ -80,9 +88,6 @@
 			<button id="share" on:click={share} data-clipboard-text={clipboardText ?? ''}></button>
 		</li>
 	</ul>
-	<script>
-		new ClipboardJS('#share');
-	</script>
 </aside>
 
 <style>
