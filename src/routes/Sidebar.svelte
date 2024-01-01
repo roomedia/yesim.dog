@@ -17,7 +17,7 @@
 	}
 	let clipboardText: string | undefined = undefined;
 	$: if (userId) {
-		const template = '오늘부터 ' + ($todo?.text ?? '그냥') + ' 내가 개다\n' + $page.url.origin + '/?userId=' + userId;
+		const template = '오늘부터 ' + ($todo?.text ?? '그냥') + ' 내가 개다\n' + $page.url.origin + base + '/?userId=' + userId;
 		supabase
 			.from('nickname')
 			.select('nickname')
