@@ -10,12 +10,14 @@
 
 	const user = writable<User | null | undefined>(undefined);
 	const isMe = writable<boolean>();
+	const nickname = writable<string>();
 	$: {
 		const userId = $page.url.searchParams.get('userId');
 		isMe.set(!userId || $user?.id === userId);
 	}
 	setContext('user', user);
 	setContext('isMe', isMe);
+	setContext('nickname', nickname);
 
 	const setUser = (session: Session | null) => {
 		const newUser = session?.user ?? null;

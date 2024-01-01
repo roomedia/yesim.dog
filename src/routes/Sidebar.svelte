@@ -11,31 +11,26 @@
 
 	export let todo: Writable<Todo | null>;
 	const user: Writable<User | null | undefined> = getContext('user');
+	const nickname: Writable<string> = getContext('nickname');
 	let userId: string | undefined;
 	$: if ($user !== undefined) {
 		userId = $page.url.searchParams.get('userId') ?? $user?.id;
 	}
 	let clipboardText: string | undefined = undefined;
-	$: if (userId) {
-		const template = '오늘부터 ' + ($todo?.text ?? '그냥') + ' 내가 개다\n' + $page.url.origin + base + '/?userId=' + userId;
-		supabase
-			.from('nickname')
-			.select('nickname')
-			.eq('userId', userId)
-			.maybeSingle()
-			.then(({ data, error }) => {
-				if (data) {
-					clipboardText = data.nickname + '님의 다짐!\n' + template;
-					return;
-				}
-				if (error) {
-					console.error('nickname fetch error:');
-					console.error(error);
-					toast.error('사용자 정보 확인 실패..');
-				}
-			});
-	} else {
-		clipboardText = undefined;
+	$: {
+		if (userId) {
+			const template =
+				'오늘부터 ' +
+				($todo?.text ?? '그냥') +
+				' 내가 개다\n' +
+				$page.url.origin +
+				base +
+				'/?userId=' +
+				userId;
+			clipboardText = $nickname + '님의 다짐!\n' + template;
+		} else {
+			clipboardText = undefined;
+		}
 	}
 
 	const surf = async () => {

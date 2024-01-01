@@ -10,6 +10,7 @@
 	let textarea: HTMLTextAreaElement | undefined;
 	const user: Writable<User | null | undefined> = getContext('user');
 	const isMe: Writable<boolean> = getContext('isMe');
+	const nickname: Writable<string> = getContext('nickname');
 
 	const updateTextarea = (text: string) => {
 		if (!textarea || textarea.value === text) {
@@ -22,11 +23,17 @@
 		supabase
 			.from('nickname')
 			.insert({ userId, nickname: $user!.user_metadata.name })
-			.then(({ error }) => {
+			.select()
+			.single()
+			.then(({ data, error }) => {
 				if (error) {
 					console.error('nickname insert error:');
 					console.error(error);
 					toast.error('닉네임 초기화 실패..');
+					return;
+				}
+				if (data) {
+					nickname.set(data.nickname);
 				}
 			});
 	};
@@ -40,10 +47,12 @@
 			.then(({ data, error }) => {
 				if (textarea) {
 					if (data) {
+						nickname.set(data.nickname);
 						updateTextarea(data.nickname);
 						return;
 					}
 					if ($isMe) {
+						nickname.set($user!.user_metadata.name);
 						updateTextarea($user!.user_metadata.name);
 						insertInitialNickname(userId);
 					}
@@ -70,15 +79,20 @@
 			toast.error('로그인해야 닉네임을 변경할 수 있습니다!');
 			return;
 		}
-		const { error } = await supabase
+		const { data, error } = await supabase
 			.from('nickname')
 			.update({ nickname: textarea?.value ?? $user.user_metadata.name })
-			.eq('userId', $user.id);
+			.eq('userId', $user.id)
+			.select()
+			.single();
 		if (error) {
 			console.error('nickname update error:');
 			console.error(error);
 			toast.error('닉네임 업데이트 실패..');
-		} else {
+			return;
+		}
+		if (data) {
+			nickname.set(data.nickname);
 			toast.success('닉네임 업데이트 완료!');
 		}
 	});
