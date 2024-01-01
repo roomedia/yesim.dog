@@ -1,8 +1,6 @@
 import { type RequestEvent } from "@sveltejs/kit";
 
 export const prerender = true;
-export const csr = true;
-export const ssr = false;
 
 const placeholders = [
     "술마시면",
