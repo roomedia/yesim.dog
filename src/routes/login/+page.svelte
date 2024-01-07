@@ -3,10 +3,11 @@
 	import { base } from '$app/paths';
 	import { supabase } from '$lib/supabaseClient';
 
-	let previousPage: string = base;
+	const basePage = base + '/';
+	let previousPage: string = basePage;
 
 	afterNavigate(({ from }) => {
-		previousPage = from?.url?.toString() ?? base;
+		previousPage = from?.url?.toString() ?? basePage;
 	});
 
 	globalThis.handleSignInWithGoogle = async ({ credential }) => {
