@@ -91,10 +91,10 @@
 
 <aside>
 	<ul>
-		<li><button id="home" on:click={home}></button></li>
-		<li><button id="surf" on:click={surf}></button></li>
+		<li><button id="home" on:click={home} title="집으로"></button></li>
+		<li><button id="surf" on:click={surf} title="파도타기"></button></li>
 		<li>
-			<button id="share" on:click={share} data-clipboard-text={clipboardText ?? ''}
+			<button id="share" on:click={share} title="공유하기" data-clipboard-text={clipboardText ?? ''}
 			></button>
 		</li>
 	</ul>

@@ -29,7 +29,7 @@
 <header>
 	<div class="corner">
 		<a data-sveltekit-reload href="{base}/">
-			<img src={logo} alt="yesim.dog" />
+			<img src={logo} alt="집으로" />
 		</a>
 	</div>
 

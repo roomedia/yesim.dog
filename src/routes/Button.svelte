@@ -59,6 +59,7 @@
 	<button
 		class={$isMe && $todo?.hasText ? 'active ' : ''}
 		id={$completedAt?.isCompleted ? 'success' : 'failed'}
+		title={$isMe && $todo?.hasText && $completedAt?.isCompleted ? '눌러서 다시 시작..' : '눌러서 완료하기!'}
 		on:click={toggleComplete}
 	>
 		<Counter {todo} {completedAt} />
