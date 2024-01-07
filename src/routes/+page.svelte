@@ -50,7 +50,7 @@
 		}
 		const userId = await getUserId();
 		if (userId) {
-			return await getTodoByUserId(userId) ?? insertTodo(userId);
+			return (await getTodoByUserId(userId)) ?? insertTodo(userId);
 		}
 		return null;
 	};
@@ -90,13 +90,12 @@
 	const todo: Writable<Todo | null> = writable();
 	const completedAt: Writable<CompletedAt | null> = writable();
 	$: {
-		getTodo($page.url.searchParams.get('userId'))
-		.then((value) => {
+		getTodo($page.url.searchParams.get('userId')).then((value) => {
 			todo.set(value);
 			if (value) {
-			getCompletedAt(value).then((value) => completedAt.set(value));
+				getCompletedAt(value).then((value) => completedAt.set(value));
 			} else {
-				completedAt.set(null)
+				completedAt.set(null);
 			}
 		});
 	}

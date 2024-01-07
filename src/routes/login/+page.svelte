@@ -29,7 +29,7 @@
 <section>
 	<div
 		id="g_id_onload"
-		data-client_id="{import.meta.env.VITE_GCP_CLIENT_ID}"
+		data-client_id={import.meta.env.VITE_GCP_CLIENT_ID}
 		data-context="use"
 		data-ux_mode="popup"
 		data-callback="handleSignInWithGoogle"

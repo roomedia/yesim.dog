@@ -9,10 +9,9 @@ declare global {
 		// interface Platform {}
 	}
 
-	interface Window {
-	}
+	interface Window {}
 
-	async function handleSignInWithGoogle(response: { credential: string, select_by: string }): void;
+	async function handleSignInWithGoogle(response: { credential: string; select_by: string }): void;
 }
 
-export { };
+export {};
