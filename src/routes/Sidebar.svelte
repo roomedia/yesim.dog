@@ -33,6 +33,18 @@
 		}
 	}
 
+	const gotoUserId = (userId: string | null | undefined) => {
+		if (userId) {
+			goto(base + '/?userId=' + userId);
+		} else {
+			goto(base);
+		}
+	};
+
+	const home = () => {
+		gotoUserId($user?.id);
+	};
+
 	const surf = async () => {
 		const request = supabase.from('randomUsers').select('id');
 		if ($user) {
@@ -50,7 +62,7 @@
 			return;
 		}
 		if (data) {
-			goto(base + '/?userId=' + data.id);
+			gotoUserId(data.id);
 		} else {
 			toast.error('파도타기 실패! 더 이상 갈 곳이 없어요..');
 		}
@@ -79,9 +91,11 @@
 
 <aside>
 	<ul>
+		<li><button id="home" on:click={home}></button></li>
 		<li><button id="surf" on:click={surf}></button></li>
 		<li>
-			<button id="share" on:click={share} data-clipboard-text={clipboardText ?? ''}></button>
+			<button id="share" on:click={share} data-clipboard-text={clipboardText ?? ''}
+			></button>
 		</li>
 	</ul>
 </aside>
@@ -118,6 +132,10 @@
 		width: 100%;
 		height: 100%;
 		background-size: cover;
+	}
+
+	#home {
+		background-image: url($lib/images/home.png);
 	}
 
 	#surf {
