@@ -29,7 +29,7 @@
 <section>
 	<div
 		id="g_id_onload"
-		data-client_id="846158167481-dr3nb4tjvinoet7hnas7oiab2nr0v5s6.apps.googleusercontent.com"
+		data-client_id="{import.meta.env.VITE_GCP_CLIENT_ID}"
 		data-context="use"
 		data-ux_mode="popup"
 		data-callback="handleSignInWithGoogle"
